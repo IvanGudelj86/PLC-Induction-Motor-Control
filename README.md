@@ -89,7 +89,7 @@ The measurements were performed without additional mechanical load.
 
 Full PLC program documentation and TIA Portal code export:
 
-[View PLC Code Documentation](docs/TIA Portal - Full code.pdf)
+[View PLC Code Documentation](docs/TIA_Portal_Full_Code.pdf)
 
 ## Project Files
 
