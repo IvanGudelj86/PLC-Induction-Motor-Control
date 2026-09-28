@@ -47,15 +47,19 @@ The HMI application was developed using WinCC Runtime Advanced.
 
 Main HMI screens:
 
-- Manual motor control
-- Automatic operation
-- Parameters
-- Trends
-- Trend archive
-- Active alarms
-- Alarm archive
+- Manual motor control - (images/Rucno_Upravljanje.png)
+- Automatic operation - (images/Automatsko_Upravljanje.png)
+- Parameters - (images/parametri.png)
+- Trends - (images/trendovi.png)
+- Trend archive - (images/trendovi arhiva.png)
+- Active alarms - (images/alarmi.png)
+- Alarm archive - (images/alarmi arhiva.png)
 
 The HMI communicates with the Siemens S7-1200 PLC through PROFINET.
+
+## Source Code
+
+- [FC_SYS_BLOK – SCL source](src/FC_SYS_BLOK.scl)
 
 ## Experimental Measurements
 
@@ -105,4 +109,4 @@ The repository contains:
 
 Ivan Gudelj
 
-Diplomski rad – PLC automatizacija upravljačke ploče za asinkrone matore
+Diploma project – PLC automatizacija upravljačke ploče za asinkrone matore
