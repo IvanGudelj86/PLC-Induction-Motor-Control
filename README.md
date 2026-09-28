@@ -47,8 +47,6 @@ The HMI application was developed using WinCC Runtime Advanced.
 
 Main HMI screens:
 
-## HMI Visualization
-
 ### Manual Mode
 ![Manual Mode](images/Rucno_Upravljanje.png)
 
@@ -117,14 +115,14 @@ The repository contains:
 - Experimental measurement results
 - Project images
 
+## Project Context
+
+This project was developed as a graduate thesis and laboratory automation project.
+It demonstrates practical experience with PLC programming, HMI development,
+industrial communication and induction motor control.
+
 ## Author
 
 Ivan Gudelj
 
-Diploma Project – PLC Automation of an Induction Motor Control Panel
-
-## Project Context
-
-This project was developed as a diploma thesis and laboratory automation project.
-It demonstrates practical experience with PLC programming, HMI development,
-industrial communication and induction motor control.
+Graduate thesis project – PLC Automation of an Induction Motor Control Panel
