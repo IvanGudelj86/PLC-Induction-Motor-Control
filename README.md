@@ -49,11 +49,11 @@ Main HMI screens:
 
 - Manual motor control - (images/Rucno_Upravljanje.png)
 - Automatic operation - (images/Automatsko_Upravljanje.png)
-- Parameters - (images/parametri.png)
-- Trends - (images/trendovi.png)
-- Trend archive - (images/trendovi arhiva.png)
-- Active alarms - (images/alarmi.png)
-- Alarm archive - (images/alarmi arhiva.png)
+- Parameters - (images/Parametri.png)
+- Trends - (images/Trendovi.png)
+- Trend archive - (images/Trendovi_Arhiva.png)
+- Active alarms - (images/Alarmi.png)
+- Alarm archive - (images/Alarmi_Arhiva.png)
 
 The HMI communicates with the Siemens S7-1200 PLC through PROFINET.
 
@@ -109,4 +109,4 @@ The repository contains:
 
 Ivan Gudelj
 
-Diploma project – PLC automatizacija upravljačke ploče za asinkrone matore
+Diploma Project – PLC Automation of an Induction Motor Control Panel
