@@ -1,0 +1,167 @@
+﻿FUNCTION "FC_SYS_BLOK" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      M_START_DES_DI : Bool;
+      M_START_LIV_DI : Bool;
+      M_STOP_DI : Bool;
+      M_IZBOR_OZICENJA_DI : Int;
+      M_NACIN_STARTA_DI : Int;
+      "M_E-STOP_DI" : Bool;
+   END_VAR
+
+   VAR_OUTPUT 
+      M_DES_DO : Bool;
+      M_LIV_DO : Bool;
+      M_DIRECT_START_DO : Bool;
+      M_SOFT_START_DO : Bool;
+      M_ZVIJEZDA_START_DO : Bool;
+      M_TROKUT_START_DO : Bool;
+      M_ALARM_LMP : Bool;
+      M_GRE_SUS_DO : Bool;
+   END_VAR
+
+   VAR_IN_OUT 
+      UDT_VARIJEBLE : "UDT_M_sFC";
+   END_VAR
+
+
+BEGIN
+	//STOP
+	//
+	#UDT_VARIJEBLE.M_STOP_IO := #M_STOP_DI OR #"M_E-STOP_DI";
+	//GREŠKA
+	//GREŠKA SMJERA
+	//
+	#UDT_VARIJEBLE.M_GRESKA_SMJERA_IO := #UDT_VARIJEBLE.M_DES_IO AND #UDT_VARIJEBLE.M_LIV_IO;
+	//GREŠKA OŽIČENJA
+	//
+	#UDT_VARIJEBLE.M_GRESKA_OZICENJA_IO := #M_TROKUT_START_DO AND #M_ZVIJEZDA_START_DO;
+	//GREŠKA NAČINA STARTA
+	//
+	#UDT_VARIJEBLE.M_GRESKA_START_IO := #M_DIRECT_START_DO AND #M_SOFT_START_DO;
+	//GREŠKA E-STOP
+	//
+	#UDT_VARIJEBLE."M_GRESKA_E-STOP_IO" := #"M_E-STOP_DI";
+	#M_ALARM_LMP := #"M_E-STOP_DI";
+	//SVE GRESKE
+	//
+	#UDT_VARIJEBLE.M_GRESKA_IO :=
+	    #UDT_VARIJEBLE.M_GRESKA_SMJERA_IO OR
+	    #UDT_VARIJEBLE.M_GRESKA_OZICENJA_IO OR
+	    #UDT_VARIJEBLE.M_GRESKA_START_IO OR
+	    #UDT_VARIJEBLE."M_GRESKA_E-STOP_IO";
+	    
+	
+	//
+	//ODABIR SMIJERA MOTORA
+	//
+	//Pokretanje motora desno
+	"R_TRIG_DB"(CLK := #M_START_DES_DI,
+	            Q => #UDT_VARIJEBLE.M_TRIG_DES);
+	#UDT_VARIJEBLE.M_DES_IO :=
+	(
+	(#UDT_VARIJEBLE.M_TRIG_DES AND NOT #UDT_VARIJEBLE.M_LIV_IO)
+	OR
+	#UDT_VARIJEBLE.M_DES_IO
+	)
+	AND NOT #UDT_VARIJEBLE.M_STOP_IO
+	AND NOT #UDT_VARIJEBLE.M_GRESKA_IO;
+	//
+	//Pokretanje motora lijevo
+	"R_TRIG_DB_1"(CLK := #M_START_LIV_DI,
+	              Q => #UDT_VARIJEBLE.M_TRIG_LIV);
+	#UDT_VARIJEBLE.M_LIV_IO :=
+	(
+	(#UDT_VARIJEBLE.M_TRIG_LIV AND NOT #UDT_VARIJEBLE.M_DES_IO)
+	OR
+	#UDT_VARIJEBLE.M_LIV_IO)
+	AND NOT #UDT_VARIJEBLE.M_STOP_IO
+	AND NOT #UDT_VARIJEBLE.M_GRESKA_IO;
+	//
+	//ODABIR NAČINA STARTA MOTORA
+	//
+	#M_DIRECT_START_DO := FALSE;
+	#M_SOFT_START_DO := FALSE;
+	IF (#UDT_VARIJEBLE.M_DES_IO OR #UDT_VARIJEBLE.M_LIV_IO) THEN
+	    CASE #M_IZBOR_OZICENJA_DI OF
+	        1:  // DIREKTAN NAČIN STARTA
+	            #M_DIRECT_START_DO := TRUE;
+	            #M_SOFT_START_DO := FALSE;
+	            ;
+	        2:  // SOFT NAČIN STARTA
+	            #M_SOFT_START_DO := TRUE;
+	            #M_DIRECT_START_DO := FALSE;
+	            ;
+	        ELSE  // GREŠKA
+	            #M_DIRECT_START_DO := FALSE;
+	            #M_SOFT_START_DO := FALSE;
+	            ;
+	    END_CASE;
+	ELSE
+	    //NIJE ODABRAN SMIJER
+	    //
+	    #M_DIRECT_START_DO := FALSE;
+	    #M_SOFT_START_DO := FALSE;
+	    
+	END_IF;
+	//ODABIR OŽIČENJA
+	//
+	#M_TROKUT_START_DO := FALSE;
+	#M_ZVIJEZDA_START_DO := FALSE;
+	// TAJMER ZA ZVIJEZDA-TROKUT
+	"IEC_Timer_ZVI_TRO_DB".TON(
+	                           IN := (#M_NACIN_STARTA_DI = 3)
+	                           AND (#M_DIRECT_START_DO OR #M_SOFT_START_DO)
+	                           AND (#UDT_VARIJEBLE.M_DES_IO OR #UDT_VARIJEBLE.M_LIV_IO),
+	                           PT := #UDT_VARIJEBLE.M_TON_ZVI_TRO_PT,
+	                           Q => #UDT_VARIJEBLE.M_TON_ZVI_TRO_OUT
+	);
+	IF (#M_DIRECT_START_DO OR #M_SOFT_START_DO) THEN
+	    CASE #M_NACIN_STARTA_DI OF
+	        1:  // POKRETANJE MOTORA TROKUTOM
+	            #M_TROKUT_START_DO := TRUE;
+	            #M_ZVIJEZDA_START_DO := FALSE;
+	            ;
+	        2:  // POKRETANJE MOTORA ZVIJEZDA
+	            #M_TROKUT_START_DO := FALSE;
+	            #M_ZVIJEZDA_START_DO := TRUE;
+	            ;
+	        3:  // POKRETANJE MOTORA ZVIJEZDA-TROKUT
+	            
+	            IF NOT #UDT_VARIJEBLE.M_TON_ZVI_TRO_OUT THEN
+	                // Prvo radi ZVIJEZDA
+	                #M_ZVIJEZDA_START_DO := TRUE;
+	                #M_TROKUT_START_DO := FALSE;
+	            ELSE
+	                // Nakon 1 sekunde prebaci na TROKUT
+	                #M_ZVIJEZDA_START_DO := FALSE;
+	                #M_TROKUT_START_DO := TRUE;
+	                ;
+	            END_IF;
+	        ELSE  // GREŠKA
+	            #M_TROKUT_START_DO := FALSE;
+	            #M_ZVIJEZDA_START_DO := FALSE;
+	            ;
+	    END_CASE;
+	ELSE
+	    //NIJE ODABRAN NAČIN POKRETANJA MOTORA
+	    //
+	    #M_TROKUT_START_DO := FALSE;
+	    #M_ZVIJEZDA_START_DO := FALSE;
+	    
+	END_IF;
+	
+	//IZLAZ ZA GREŠE
+	//
+	#M_GRE_SUS_DO := #UDT_VARIJEBLE.M_GRESKA_IO;
+	//IZLAZ ZA POKRETANJE MOTORA U DESNU STRANU
+	//
+	#M_DES_DO := #UDT_VARIJEBLE.M_DES_IO;
+	//IZLAZ ZA POKRETANJE MOTORA U LIJEVU STARNU
+	//
+	#M_LIV_DO := #UDT_VARIJEBLE.M_LIV_IO;
+	
+	
+END_FUNCTION
+
