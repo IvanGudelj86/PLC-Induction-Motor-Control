@@ -47,13 +47,22 @@ The HMI application was developed using WinCC Runtime Advanced.
 
 Main HMI screens:
 
-- Manual motor control - (images/Rucno_Upravljanje.png)
-- Automatic operation - (images/Automatsko_Upravljanje.png)
-- Parameters - (images/Parametri.png)
-- Trends - (images/Trendovi.png)
-- Trend archive - (images/Trendovi_Arhiva.png)
-- Active alarms - (images/Alarmi.png)
-- Alarm archive - (images/Alarmi_Arhiva.png)
+## HMI Visualization
+
+### Manual Mode
+![Manual Mode](images/Rucno_Upravljanje.png)
+
+### Automatic Mode
+![Automatic Mode](images/Automatsko_Upravljanje.png)
+
+### Parameters
+![Parameters](images/Parametri.png)
+
+### Alarms
+![Alarms](images/Alarmi.png)
+
+### Trends
+![Trends](images/Trendovi.png)
 
 The HMI communicates with the Siemens S7-1200 PLC through PROFINET.
 
@@ -110,3 +119,9 @@ The repository contains:
 Ivan Gudelj
 
 Diploma Project – PLC Automation of an Induction Motor Control Panel
+
+## Project Context
+
+This project was developed as a diploma thesis and laboratory automation project.
+It demonstrates practical experience with PLC programming, HMI development,
+industrial communication and induction motor control.
