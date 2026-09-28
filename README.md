@@ -64,7 +64,7 @@ Main HMI screens:
 ### Trends
 ![Trends](images/Trendovi.png)
 
-## Project Hardware
+## Project Panel
 ![Control Panel](images/Upravljacka_Ploca.jpeg)
 
 The HMI communicates with the Siemens S7-1200 PLC through PROFINET.
